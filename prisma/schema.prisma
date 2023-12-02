@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id     Int      @id @default(autoincrement())
+  name   String
+  email  String
+  pass   String
+  image  String   @default("https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=")
+  role   Role?    @default(USER)
+  orders Orders[]
+
+  @@unique([name, email])
+}
+
+model BakeryProducts {
+  id          Int             @id @default(autoincrement())
+  name        String
+  imageUrl    String
+  price       Float
+  quantity    Int
+  description String          @db.LongText
+  type        CategoriesType? @default(SWEET_CAKE)
+  category    Categories      @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  OrderItems  OrderItems[]
+
+  @@map("products")
+}
+
+model Categories {
+  id       Int              @id @default(autoincrement())
+  name     String
+  products BakeryProducts[]
+}
+
+model OrderItems {
+  id        Int            @id @default(autoincrement())
+  product   BakeryProducts @relation(fields: [productId], references: [id])
+  productId Int
+  order     Orders         @relation(fields: [orderId], references: [id])
+  orderId   Int
+  quantity  Int
+  createAt  DateTime       @default(now())
+}
+
+model Orders {
+  id         Int          @id @default(autoincrement())
+  user       Users        @relation(fields: [userId], references: [id])
+  userId     Int
+  OrderItems OrderItems[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum CategoriesType {
+  SWEET_CAKE
+  CHEESE_CAKE
+  DRINK
+}

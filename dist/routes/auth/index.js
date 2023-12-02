@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_register_1 = __importDefault(require("../../controllers/auth/auth.register"));
+const auth_sendmail_1 = __importDefault(require("../../controllers/auth/auth.sendmail"));
+const auth_mail_1 = __importDefault(require("../../controllers/auth/auth.mail"));
+const auth_login_1 = __importDefault(require("../../controllers/auth/auth.login"));
+const auth_cookie_1 = __importDefault(require("../../controllers/auth/auth.cookie"));
+const auth_clearCookie_1 = __importDefault(require("../../controllers/auth/auth.clearCookie"));
+const auth_social_register_1 = __importDefault(require("../../controllers/auth/auth.social.register"));
+const route = (0, express_1.Router)();
+route.post("/social/register", auth_social_register_1.default);
+route.post("/register", [auth_register_1.default, auth_sendmail_1.default]);
+route.get("/confirm", auth_mail_1.default);
+route.post("/login", auth_login_1.default);
+route.get("/setcookie", auth_cookie_1.default);
+route.get("/clearcookie", auth_clearCookie_1.default);
+exports.default = route;
